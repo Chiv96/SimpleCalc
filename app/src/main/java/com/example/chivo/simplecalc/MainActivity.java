@@ -2,10 +2,13 @@ package com.example.chivo.simplecalc;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import java.lang.String;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -15,6 +18,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     String input = null;
     Integer output = 0;
+
+    private final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +83,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             case R.id.equal:
                 output = eval(input);
-                d.setText(output);
+                d.setText(String.valueOf(output));
                 break;
 
             default:
@@ -121,7 +126,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public int eval(String input)
     {
-        char[] digit=new char[10];
+        //char[] digit = new char[10];
+        List<String> digits = new ArrayList<>();
         char getop;
         Integer n1,n2,output;
         char[] tokens= input.toCharArray();
@@ -129,32 +135,39 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Stack<Character> ops= new Stack<Character>();
         for(int i=0;i<tokens.length;i++)
         {
-            if(tokens[i]==' ')
-                continue;
-
-            else if(tokens[i]>=0 && tokens[i]<=9)
-            {
+            Log.i(TAG, "eval: " + i + " token val: " + tokens[i]);
+            if(tokens[i]==' ') {
+                Log.i(TAG, "eval: tokens[i]==' '");
+            } else if(Character.isDigit(tokens[i])) {
+                Log.i(TAG, "eval: tokens[i]>=0 && tokens[i]<=9");
                 int k=0;
-                while(tokens[i]>=0 && tokens[i]<=9)
-                {
-                    digit[k++]=tokens[i++];
+                int counter = i;
+                while(Character.isDigit(tokens[counter])) {
+                    //digit[k++] = tokens[counter++];
+                    Log.i(TAG, "eval: checking: " + tokens[counter]);
+                    digits.add(String.valueOf((tokens[counter])));
+                    if (tokens.length - counter == 1) {
+                        break;
+                    }
+                    counter++;
+                    //Log.i(TAG, "eval: " + digit.toString());
                 }
-                i--;
-                digit[k]='\0';
-                values.push(Integer.parseInt(digit.toString()));
-            }
-
-            else
-            {
-                 if(!ops.empty() && ((checkPrec(ops.peek())>checkPrec(tokens[i])) || (checkPrec(ops.peek())==checkPrec(tokens[i]))))
-                 {
+                //digit[k]='\
+                Log.i(TAG, "eval: digit: " + digits.toString());
+                String number = "";
+                for (String string : digits) {
+                    number = number + string;
+                }
+                values.push(Integer.valueOf(number));
+            } else {
+                Log.i(TAG, "eval: else");
+                 if(!ops.empty() && ((checkPrec(ops.peek())>checkPrec(tokens[i])) || (checkPrec(ops.peek())==checkPrec(tokens[i])))) {
                      getop=ops.pop();
                      ops.push(tokens[i]);
                      n1=values.pop();
                      n2=values.pop();
                      values.push(applyOp(getop,n1,n2));
-                 }
-                 else
+                 } else
                      ops.push(tokens[i]);
 
             }
