@@ -18,5 +18,6 @@
     <string name="plus">+</string>
     <string name="dot">.</string>
     <string name="equal">=</string>
+    <string name="clr">CLR</string>
 
 </resources>

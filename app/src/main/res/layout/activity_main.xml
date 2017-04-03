@@ -12,37 +12,46 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="2"
         android:layout_marginBottom="8dp"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
+        android:paddingBottom="25dp"
+        android:paddingTop="20dp"
         android:background="@color/lightYellow"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/display_screen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:cursorVisible="true"
             android:gravity="right"
             android:layout_gravity="right"
-            android:cursorVisible="true"
-            android:textColorHint="@color/DimGray"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="@string/zero"
-            android:textColor="@color/black"
+            android:textColor="@color/DimGray"
             android:textSize="60sp"
             />
-        <EditText
-            android:id="@+id/exp"
+        <TextView
+            android:id="@+id/display_screen2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
-            android:gravity="bottom"
-            android:lines="2"
-            android:maxLines="2"
-            android:textSize="20sp" />
+            android:layout_weight="1"
+            android:gravity="right"
+            android:layout_gravity="right"
+            android:cursorVisible="true"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:text="0"
+            android:textColor="@color/black"
+            android:textSize="75sp"
+            />
+
     </LinearLayout>
-    <!--ROW 1-->
+
 
     <LinearLayout
         android:id="@+id/first_row"
@@ -53,9 +62,9 @@
         >
         <Button
             android:id="@+id/ac"
-            android:layout_width="39dp"
+            android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.58"
+            android:layout_weight="1"
             android:textStyle="bold"
             android:textSize="30sp"
             android:padding="8dp"
@@ -63,7 +72,18 @@
             android:background="@color/Orange"
             android:textColor="@color/white"
             android:text="@string/ac" />
-
+        <Button
+            android:id="@+id/clr"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:padding="8dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/Orange"
+            android:textColor="@color/white"
+            android:text="@string/clr" />
 
         <Button
             android:id="@+id/percentage"
@@ -98,6 +118,7 @@
         android:id="@+id/second_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxHeight="1dp"
         android:layout_weight="1"
         android:layout_marginBottom="1dp"
         >
@@ -291,9 +312,9 @@
         >
         <Button
             android:id="@+id/zero"
-            android:layout_width="98dp"
+            android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:textStyle="bold"
             android:textSize="20sp"
             android:padding="8dp"

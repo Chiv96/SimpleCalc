@@ -14,19 +14,17 @@ import java.util.Stack;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     TextView display;
-    Button ac, zero, one, two, three, four, five, six, seven, eight, nine, plus, minus, div, mul, plusminus, percent, equal, dot;
-
+    Button ac, zero, one, two, three, four, five, six, seven, eight, nine, plus, minus, div, mul, percent, equal, dot, clr;
     String input = null;
-    Integer output = 0;
+    Integer output = 0,flag=0;
 
-    private final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        display = (TextView) findViewById(R.id.display_screen);
+
         ac = (Button) findViewById(R.id.ac);
         percent = (Button) findViewById(R.id.percentage);
         equal = (Button) findViewById(R.id.equal);
@@ -45,6 +43,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         seven = (Button) findViewById(R.id.seven);
         eight = (Button) findViewById(R.id.eight);
         nine = (Button) findViewById(R.id.nine);
+        clr= (Button) findViewById(R.id.clr);
 
         ac.setOnClickListener(this);
         percent.setOnClickListener(this);
@@ -64,26 +63,42 @@ public class MainActivity extends Activity implements View.OnClickListener {
         seven.setOnClickListener(this);
         eight.setOnClickListener(this);
         nine.setOnClickListener(this);
-
+        clr.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
-
         TextView d = (TextView) findViewById(R.id.display_screen);
-        Button button = (Button) v;
+        TextView d2 = (TextView) findViewById(R.id.display_screen2);
 
+        Button button = (Button) v;
         switch (v.getId()) {
             case R.id.ac:
                 input = null;
                 output = 0;
-                d.setText("0");
+                d.setText("");
+                d2.setText("0");
                 break;
+
+            case R.id.clr:
+                if(input==null)
+                    d2.setText("0");
+                else
+                {
+                    input = input.substring(0, input.length() - 1);
+                    d2.setText(input);
+                }
+                break;
+
 
             case R.id.equal:
                 output = eval(input);
-                d.setText(String.valueOf(output));
+                d.setText(input);
+                if (output=='0')
+                    d2.setText("<ERROR>");
+                else
+                    d2.setText(String.valueOf(output));
                 break;
 
             default:
@@ -91,7 +106,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     input=button.getText().toString();
                 else
                     input += button.getText().toString();
-                d.setText(input);
+                d2.setText(input);
                 break;
 
         }
@@ -99,20 +114,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public int checkPrec(char op)
     {
-        if(op=='%' || op=='*' || op=='/')
+        if(op=='%' || op=='x' || op=='/')
             return 2;
         else if(op=='+' || op=='-')
             return 1;
         return 0;
     }
 
-    public int applyOp(char op, Integer n1, Integer n2)
+    public int applyOp(char op, Integer n2, Integer n1)
     {
         switch(op)
         {
             case '%':
                 return n1%n2;
-            case '*':
+            case 'x':
                 return n1*n2;
             case '/':
                 return n1/n2;
@@ -126,50 +141,66 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public int eval(String input)
     {
-        //char[] digit = new char[10];
+
+
         List<String> digits = new ArrayList<>();
         char getop;
         Integer n1,n2,output;
         char[] tokens= input.toCharArray();
+
         Stack<Integer> values= new Stack<Integer>();
         Stack<Character> ops= new Stack<Character>();
         for(int i=0;i<tokens.length;i++)
         {
-            Log.i(TAG, "eval: " + i + " token val: " + tokens[i]);
-            if(tokens[i]==' ') {
-                Log.i(TAG, "eval: tokens[i]==' '");
-            } else if(Character.isDigit(tokens[i])) {
-                Log.i(TAG, "eval: tokens[i]>=0 && tokens[i]<=9");
-                int k=0;
+             if(Character.isDigit(tokens[i])) {
                 int counter = i;
-                while(Character.isDigit(tokens[counter])) {
-                    //digit[k++] = tokens[counter++];
-                    Log.i(TAG, "eval: checking: " + tokens[counter]);
+                while(Character.isDigit(tokens[counter]))
+                {
                     digits.add(String.valueOf((tokens[counter])));
-                    if (tokens.length - counter == 1) {
+
+                    if (tokens.length - counter == 1)
                         break;
-                    }
+
                     counter++;
-                    //Log.i(TAG, "eval: " + digit.toString());
+
                 }
-                //digit[k]='\
-                Log.i(TAG, "eval: digit: " + digits.toString());
+                if(counter-i>1)
+                      i=counter-1;
+
                 String number = "";
                 for (String string : digits) {
                     number = number + string;
                 }
+
                 values.push(Integer.valueOf(number));
-            } else {
-                Log.i(TAG, "eval: else");
-                 if(!ops.empty() && ((checkPrec(ops.peek())>checkPrec(tokens[i])) || (checkPrec(ops.peek())==checkPrec(tokens[i])))) {
+                digits.clear();
+                flag=0;
+
+            }
+
+            else {
+
+                if(flag==1)
+                {
+                    return '0';
+                }
+
+                 if(!ops.empty() && ((checkPrec(ops.peek())>checkPrec(tokens[i])) || (checkPrec(ops.peek())==checkPrec(tokens[i]))))
+                 {
+
                      getop=ops.pop();
                      ops.push(tokens[i]);
+                     flag=1;
+
                      n1=values.pop();
                      n2=values.pop();
                      values.push(applyOp(getop,n1,n2));
-                 } else
+                 }
+                 else {
                      ops.push(tokens[i]);
+                     flag=1;
 
+                 }
             }
 
         }
