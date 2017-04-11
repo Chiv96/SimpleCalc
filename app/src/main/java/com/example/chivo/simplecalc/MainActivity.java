@@ -16,8 +16,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     TextView display;
     Button ac, zero, one, two, three, four, five, six, seven, eight, nine, plus, minus, div, mul, percent, equal, dot, clr;
     String input = null;
-    Integer output = 0,flag=0;
-
+    Integer flag=0;
+    double output = 0.0;
+    private static final String TAG= MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.ac:
                 input = null;
-                output = 0;
+                output = 0.0;
                 d.setText("");
                 d2.setText("0");
                 break;
@@ -95,10 +96,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.equal:
                 output = eval(input);
                 d.setText(input);
-                if (output=='0')
+                if (output=='0' || flag==1)
                     d2.setText("<ERROR>");
-                else
+                else                //CHECKKK!!!!!!
+                {
+
+                    int whole=(int)output;
+                    double dec=output-whole;
+                    if(dec==0.0)
+                        output=whole;
                     d2.setText(String.valueOf(output));
+                }
+
                 break;
 
             default:
@@ -121,7 +130,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         return 0;
     }
 
-    public int applyOp(char op, Integer n2, Integer n1)
+    public Double applyOp(char op, Double n2, Double n1)
     {
         switch(op)
         {
@@ -130,34 +139,37 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case 'x':
                 return n1*n2;
             case '/':
-                return n1/n2;
+                if(n2==0)
+                    flag=1;
+                else
+                    return n1/n2;
             case '+':
                 return n1+n2;
             case '-':
                 return n1-n2;
         }
-        return 0;
+        return 0.0;
     }
 
-    public int eval(String input)
+    public double eval(String input)
     {
 
 
         List<String> digits = new ArrayList<>();
         char getop;
-        Integer n1,n2,output;
+        Double n1,n2,output;
         char[] tokens= input.toCharArray();
 
-        Stack<Integer> values= new Stack<Integer>();
+        Stack<Double> values= new Stack<Double>();
         Stack<Character> ops= new Stack<Character>();
         for(int i=0;i<tokens.length;i++)
         {
-             if(Character.isDigit(tokens[i])) {
+             if(Character.isDigit(tokens[i]) || tokens[i]=='.') {
                 int counter = i;
-                while(Character.isDigit(tokens[counter]))
+                while(Character.isDigit(tokens[counter]) || tokens[counter]=='.')
                 {
-                    digits.add(String.valueOf((tokens[counter])));
 
+                    digits.add(String.valueOf((tokens[counter])));
                     if (tokens.length - counter == 1)
                         break;
 
@@ -172,11 +184,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     number = number + string;
                 }
 
-                values.push(Integer.valueOf(number));
+                values.push(Double.valueOf(number));
                 digits.clear();
                 flag=0;
 
             }
+
 
             else {
 
@@ -195,6 +208,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                      n1=values.pop();
                      n2=values.pop();
                      values.push(applyOp(getop,n1,n2));
+
                  }
                  else {
                      ops.push(tokens[i]);
